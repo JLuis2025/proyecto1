@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Aprende Multiplicando!</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .bounce {
+            animation: bounce 0.5s ease infinite;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .shake {
+            animation: shake 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center text-purple-600 mb-4">¡Aprende Multiplicando!</h1>
+        
+        <!-- Contador de puntuación -->
+        <div class="flex justify-between mb-6">
+            <div class="text-xl text-green-600">✅ Aciertos: <span id="correct">0</span></div>
+            <div class="text-xl text-red-600">❌ Errores: <span id="wrong">0</span></div>
+        </div>
+
+        <!-- Área de ejercicio -->
+        <div class="text-center mb-6">
+            <div id="problem" class="text-4xl font-bold text-blue-600 mb-4">3 × 4 = ?</div>
+            <input 
+                id="answer" 
+                type="number" 
+                class="w-24 text-2xl p-2 border-2 border-purple-300 rounded-lg focus:outline-none focus:border-purple-500 text-center"
+                placeholder="Respuesta"
+            >
+        </div>
+
+        <!-- Botón de verificar -->
+        <button 
+            id="checkBtn" 
+            class="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 rounded-lg mb-4 transition duration-300"
+        >
+            ¡Verificar!
+        </button>
+
+        <!-- Mensaje de retroalimentación -->
+        <div id="feedback" class="text-center text-xl font-semibold h-8"></div>
+
+        <!-- Botón de reiniciar -->
+        <button 
+            id="resetBtn" 
+            class="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 rounded-lg transition duration-300"
+        >
+            Reiniciar Juego
+        </button>
+    </div>
+
+    <script>
+        // Instrucciones de uso:
+        // 1. Guarda este archivo como "multiplicaciones.html"
+        // 2. Ábrelo con doble clic en cualquier navegador moderno
+        // 3. Escribe la respuesta en el campo y presiona "Verificar" o Enter
+        // 4. Usa "Reiniciar Juego" para empezar de nuevo
+
+        // Elementos del DOM
+        const problemEl = document.getElementById('problem');
+        const answerEl = document.getElementById('answer');
+        const checkBtn = document.getElementById('checkBtn');
+        const feedbackEl = document.getElementById('feedback');
+        const correctEl = document.getElementById('correct');
+        const wrongEl = document.getElementById('wrong');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Variables de estado
+        let num1, num2, correctCount = 0, wrongCount = 0;
+
+        // Generar nuevo problema
+        function newProblem() {
+            num1 = Math.floor(Math.random() * 9) + 1;
+            num2 = Math.floor(Math.random() * 9) + 1;
+            problemEl.textContent = `${num1} × ${num2} = ?`;
+            answerEl.value = '';
+            answerEl.focus();
+            feedbackEl.textContent = '';
+        }
+
+        // Verificar respuesta
+        function checkAnswer() {
+            const userAnswer = parseInt(answerEl.value);
+            const correctAnswer = num1 * num2;
+
+            if (isNaN(userAnswer)) {
+                feedbackEl.textContent = '¡Ingresa un número!';
+                feedbackEl.className = 'text-center text-xl font-semibold text-yellow-600';
+                answerEl.classList.add('shake');
+                setTimeout(() => answerEl.classList.remove('shake'), 300);
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                correctCount++;
+                correctEl.textContent = correctCount;
+                feedbackEl.textContent = '¡Excelente! 🎉';
+                feedbackEl.className = 'text-center text-xl font-semibold text-green-600 bounce';
+                problemEl.classList.add('bounce');
+                setTimeout(() => {
+                    problemEl.classList.remove('bounce');
+                    newProblem();
+                }, 1000);
+            } else {
+                wrongCount++;
+                wrongEl.textContent = wrongCount;
+                feedbackEl.textContent = `¡Ups! Era ${correctAnswer}. Intenta otra vez.`;
+                feedbackEl.className = 'text-center text-xl font-semibold text-red-600';
+                answerEl.classList.add('shake');
+                setTimeout(() => answerEl.classList.remove('shake'), 300);
+            }
+        }
+
+        // Reiniciar juego
+        function resetGame() {
+            correctCount = 0;
+            wrongCount = 0;
+            correctEl.textContent = '0';
+            wrongEl.textContent = '0';
+            newProblem();
+            feedbackEl.textContent = '¡Juego reiniciado!';
+            setTimeout(() => feedbackEl.textContent = '', 1000);
+        }
+
+        // Event listeners
+        checkBtn.addEventListener('click', checkAnswer);
+        answerEl.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkAnswer();
+        });
+        resetBtn.addEventListener('click', resetGame);
+
+        // Iniciar juego
+        newProblem();
+    </script>
+</body>
+</html>
